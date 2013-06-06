@@ -99,6 +99,9 @@
   js/HTMLElement
   (-elem [this] this)
 
+  js/SVGElement
+  (-elem [this] this)
+  
   js/DocumentFragment
   (-elem [this] this)
 
