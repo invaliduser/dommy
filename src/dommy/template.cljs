@@ -16,6 +16,15 @@
       (.max js/Math id-idx class-idx)
       idx)))
 
+(def svg-tags
+
+  #{"altGlyph" "altGlyphDef" "altGlyphItem" "animate" "animateColor" "animateMotion" "animateTransform" "circle" "clipPath" "color-profile" "cursor" "defs" "desc" "ellipse" "feBlend" "feColorMatrix" "feComponentTransfer" "feComposite" "feConvolveMatrix" "feDiffuseLighting" "feDisplacementMap" "feDistantLight" "feFlood" "feFuncA" "feFuncB" "feFuncG" "feFuncR" "feGaussianBlur" "feImage" "feMerge" "feMergeNode" "feMorphology" "feOffset" "fePointLight" "feSpecularLighting" "feSpotLight" "feTile" "feTurbulence" "filter" "font" "font-face" "font-face-format" "font-face-name" "font-face-src" "font-face-uri" "foreignObject" "g" "glyph" "glyphRef" "hkern" "image" "line" "linearGradient" "marker" "mask" "metadata" "missing-glyph" "mpath" "path" "pattern" "polygon" "polyline" "radialGradient" "rect" "set" "stop" "style" "svg" "switch" "symbol" "text" "textPath" "title" "tref" "tspan" "use" "view" "vkern"})
+
+(defn create-tag [tag]
+  (if (svg-tags tag)
+    (.createElementNS js/document "http://www.w3.org/2000/svg" tag)
+    (.createElement js/document tag)))
+
 (defn base-element
   "dom element from css-style keyword like :a.class1 or :span#my-span.class"
   [node-key]
@@ -25,7 +34,7 @@
               (> base-idx 0) (.substring node-str 0 base-idx)
               (zero? base-idx) "div"
               :else node-str)
-        node (.createElement js/document tag)]
+        node (create-tag tag)]
     (when (>= base-idx 0)
       (loop [str (.substring node-str base-idx)]
         (let [next-idx (next-css-index str 1)
