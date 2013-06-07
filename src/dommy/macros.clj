@@ -3,6 +3,10 @@
 
 (declare node)
 
+(def svg-tags
+
+  #{"altGlyph" "altGlyphDef" "altGlyphItem" "animate" "animateColor" "animateMotion" "animateTransform" "circle" "clipPath" "color-profile" "cursor" "defs" "desc" "ellipse" "feBlend" "feColorMatrix" "feComponentTransfer" "feComposite" "feConvolveMatrix" "feDiffuseLighting" "feDisplacementMap" "feDistantLight" "feFlood" "feFuncA" "feFuncB" "feFuncG" "feFuncR" "feGaussianBlur" "feImage" "feMerge" "feMergeNode" "feMorphology" "feOffset" "fePointLight" "feSpecularLighting" "feSpotLight" "feTile" "feTurbulence" "filter" "font" "font-face" "font-face-format" "font-face-name" "font-face-src" "font-face-uri" "foreignObject" "g" "glyph" "glyphRef" "hkern" "image" "line" "linearGradient" "marker" "mask" "metadata" "missing-glyph" "mpath" "path" "pattern" "polygon" "polyline" "radialGradient" "rect" "set" "stop" "style" "svg" "switch" "symbol" "text" "textPath" "title" "tref" "tspan" "use" "view" "vkern"})
+
 (defn constant? [data]
   (some #(% data) [number? keyword? string?]))
 
@@ -118,7 +122,9 @@
         children (drop (if (or literal-attrs var-attrs) 1 0) rest)
         [tag class-str id] (parse-keyword node-key)
         dom-sym (gensym "dom")]
-    `(let [~dom-sym (.createElement js/document ~(name tag))]
+    `(let [~dom-sym ~(if (svg-tags (name tag))
+                       `(.createElementNS js/document "http://www.w3.org/2000/svg" ~(name tag))
+                       `(.createElement js/document ~(name tag)))]
        ~@(when-not (empty? class-str)
            [`(set! (.-className ~dom-sym) ~class-str)])
        ~@(when id
