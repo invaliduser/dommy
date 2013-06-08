@@ -150,7 +150,11 @@
 
        (set-attr! elem :id \"some-id\"
                        :name \"some-name\")"
-  ([elem k] (set-attr! (node elem) k "true"))
+  ([elem k]
+     (if (map? k)
+       (doseq [entry k]
+         (set-attr! elem (key entry) (val entry))))
+     (set-attr! (node elem) k "true"))
   ([elem k v]
    (when v
      (if (fn? v)
